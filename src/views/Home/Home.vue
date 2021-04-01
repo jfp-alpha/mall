@@ -1,11 +1,14 @@
 <template>
   <div id="home">
     <nav-bar class="home-bar"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banner = "banners"></home-swiper>
-    <recommoned :recommend = "recommend"></recommoned>
-    <feature-view></feature-view>
-    <tab-control :title="['流行','新款','精选']" class="tab-control" @btnclick = "btnclick"></tab-control>
-    <list :goods="showGoods"></list>
+    <scroll class="countent" ref="scroll" :probe-type = '3' @scroll="scrollposition">
+      <home-swiper :banner = "banners"></home-swiper>
+      <recommoned :recommend = "recommend"></recommoned>
+      <feature-view></feature-view>
+      <tab-control :title="['流行','新款','精选']" class="tab-control" @btnclick = "btnclick"></tab-control>
+      <list :goods="showGoods"></list>
+    </scroll>
+    <back-top @click.native="backtop" v-show="isshow"></back-top>
 
   </div>
 </template>
@@ -18,6 +21,8 @@ import FeatureView from './childcomponents/FeatureView'
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/context/tabControl/TabControl'
 import List from 'components/context/goods/goodList'
+import Scroll from 'components/common/scroll/Scroll'
+import BackTop from 'components/context/backtop/BackTop'
 
 import {getHomeMultidata,getHomeData} from 'network/home'
 
@@ -28,7 +33,9 @@ export default {
     FeatureView,
     NavBar,
     TabControl,
-    List
+    List,
+    Scroll,
+    BackTop
   },
   data(){
     return {
@@ -39,7 +46,8 @@ export default {
         'new':{page:1,list:[]},
         'sell':{page:1,list:[]}
       },
-      currentIndex: 'pop'
+      currentIndex: 'pop',
+      isshow: false
     }
   },
   computed: {
@@ -68,6 +76,12 @@ export default {
           break
       }
     },
+    backtop(){
+      this.$refs.scroll.scrollto(0,0)
+    },
+    scrollposition(position){
+      this.isshow = -position.y > 1000
+    },
 
 
     //网络请求相关
@@ -91,9 +105,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #home{
-    margin-top: 44px;
+    /* margin-top: 44px; */
+    height: 100vh;
+    position: relative
   }
   .home-bar {
     /* background-color: #ff8198; */
@@ -103,11 +119,24 @@ export default {
     left: 0;
     right: 0;
     top: 0;
-    z-index: 9;
+    z-index: 9
   }
-  .tab-control {
+  /* .tab-control {
     position: sticky;
     top: 44px;
     z-index: 1;
+  } */
+
+
+  .countent{
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0
   }
+  /* .countent{
+    height: calc(100% - 93px);
+    overflow: hidden;
+  } */
 </style>
