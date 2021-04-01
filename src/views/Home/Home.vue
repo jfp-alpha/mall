@@ -1,7 +1,12 @@
 <template>
   <div id="home">
     <nav-bar class="home-bar"><div slot="center">购物街</div></nav-bar>
-    <scroll class="countent" ref="scroll" :probe-type = '3' @scroll="scrollposition">
+    <scroll class="countent" 
+            ref="scroll" 
+            :probe-type = '3' 
+            @scroll="scrollposition" 
+            :pull-up-load = 'true'
+            @pullingUp = 'pullingup'>
       <home-swiper :banner = "banners"></home-swiper>
       <recommoned :recommend = "recommend"></recommoned>
       <feature-view></feature-view>
@@ -82,6 +87,9 @@ export default {
     scrollposition(position){
       this.isshow = -position.y > 1000
     },
+    pullingup(){
+      this.getHomeData(this.currentIndex)
+    },
 
 
     //网络请求相关
@@ -97,7 +105,9 @@ export default {
       getHomeData(type,page).then(res => {
         // console.log(res);
         this.goods[type].list.push(...res.data.list);
-        this.goods[type].page++
+        this.goods[type].page++;
+
+        this.$refs.scroll.finishPullUp()
         
       })
     }

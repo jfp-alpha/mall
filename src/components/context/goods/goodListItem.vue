@@ -29,7 +29,6 @@ export default {
 
     width: 48%;
   }
-
   .goods-item img {
     width: 100%;
     border-radius: 5px;
