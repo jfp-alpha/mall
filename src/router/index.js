@@ -7,6 +7,7 @@ import Home from 'views/Home/Home'
 import Category from 'views/Category/Category'
 import Shopcart from 'views/Shopcart/Shopcart'
 import Profile from 'views/Profile/Profile'
+import Detail from 'views/detail/Detail'
 
 const routes = [
   {
@@ -28,6 +29,10 @@ const routes = [
   {
     path:'/shopcart',
     component:Shopcart
+  },
+  {
+    path:'/detail/:iid',
+    component:Detail
   }
 ]
 
