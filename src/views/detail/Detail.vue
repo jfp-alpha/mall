@@ -1,7 +1,8 @@
 <template>
   <div class="detail">
-    <detail-nav-bar @navbarclick="navbarclick"></detail-nav-bar>
-    <scroll class="scroll" ref="scroll">
+    <detail-nav-bar @navbarclick="navbarclick" ref="currentIndex"></detail-nav-bar>
+
+    <scroll class="scroll" ref="scroll" :probeType="3" @scroll="detailscroll">
       <detail-swiper :top-image = 'topimage'></detail-swiper>
       <detail-goods-info :goods="goodsinfo"></detail-goods-info>
       <detail-shop-info :shop="shopInfo"></detail-shop-info>
@@ -55,7 +56,8 @@ export default {
       commentInfo: {},
       recommend: [],
       offsettop: [],
-      gettopY: null
+      gettopY: null,
+      currentIndex: 0
     }
   },
   mixins: [scrollRefresh],
@@ -91,7 +93,7 @@ export default {
       this.offsettop.push(this.$refs.params.$el.offsetTop)
       this.offsettop.push(this.$refs.comment.$el.offsetTop)
       this.offsettop.push(this.$refs.recommend.$el.offsetTop)
-      console.log(this.offsettop)
+      this.offsettop.push(Number.MAX_VALUE)
     },300)
   },
   methods:{
@@ -101,7 +103,17 @@ export default {
     },
     navbarclick(index){
       this.$refs.scroll.scrollto(0,-this.offsettop[index])
+    },
+
+    detailscroll(position){
+      for (let i = 0; i < this.offsettop.length - 1; i++) {
+        if(this.currentIndex !== i && -position.y >= this.offsettop[i] && -position.y < this.offsettop[i + 1]){
+          this.currentIndex = i
+          this.$refs.currentIndex.currentIndex = i
+        }
+      }
     }
+    
   }
 }
 </script>
