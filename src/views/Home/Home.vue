@@ -34,10 +34,10 @@ import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/context/tabControl/TabControl'
 import List from 'components/context/goods/goodList'
 import Scroll from 'components/common/scroll/Scroll'
-import BackTop from 'components/context/backtop/BackTop'
+// import BackTop from 'components/context/backtop/BackTop'
 
 import {getHomeMultidata,getHomeData} from 'network/home'
-import {scrollRefresh} from 'common/mixin'
+import {scrollRefresh,scrollTop} from 'common/mixin'
 
 export default {
   components: {
@@ -47,8 +47,7 @@ export default {
     NavBar,
     TabControl,
     List,
-    Scroll,
-    BackTop
+    Scroll
   },
   data(){
     return {
@@ -60,13 +59,12 @@ export default {
         'sell':{page:1,list:[]}
       },
       currentIndex: 'pop',
-      isshow: false,
       offsetTop: 0,
       istabcontrol: false,
       scrollY: 0,
     }
   },
-  mixins: [scrollRefresh],
+  mixins: [scrollRefresh,scrollTop],
   computed: {
     showGoods(){
       return this.goods[this.currentIndex].list
@@ -106,9 +104,6 @@ export default {
       }
       this.$refs.tabcontrol1.currentindex = index
       this.$refs.tabcontrol2.currentindex = index
-    },
-    backtop(){
-      this.$refs.scroll.scrollto(0,0)
     },
     scrollposition(position){
       this.isshow = -position.y > 1000

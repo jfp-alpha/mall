@@ -12,6 +12,8 @@
       <goods-list :goods="recommend" ref="recommend"></goods-list>
     </scroll>
 
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+    <back-top @click.native="backtop" v-show="isshow"></back-top>
   </div>
 </template>
 
@@ -23,13 +25,15 @@ import DetailShopInfo from './childdetail/DetailshopInfo'
 import DetailImageInfo from './childdetail/DetailImageInfo'
 import DetailItemParams from './childdetail/DetailItemParams'
 import DetailCommentInfo from './childdetail/DetailCommentInfo'
+import DetailBottomBar from './childdetail/DetailBottomBar'
 
 import Scroll from 'components/common/scroll/Scroll'
 import GoodsList from 'components/context/goods/goodList'
 
 import {getDetailIid,Goods,getCommend} from 'network/detail.js'
-import {scrollRefresh} from 'common/mixin'
+import {scrollRefresh,scrollTop} from 'common/mixin'
 import {debound} from 'common/utils'
+import { mapActions } from 'vuex'
 
 export default {
   //keep-alive可以根据name的值Detail排除在外
@@ -42,6 +46,7 @@ export default {
     DetailImageInfo,
     DetailItemParams,
     DetailCommentInfo,
+    DetailBottomBar,
     Scroll,
     GoodsList
   },
@@ -60,7 +65,7 @@ export default {
       currentIndex: 0
     }
   },
-  mixins: [scrollRefresh],
+  mixins: [scrollRefresh,scrollTop],
   mounted(){
   },
   destroyed(){
@@ -97,6 +102,7 @@ export default {
     },300)
   },
   methods:{
+    ...mapActions(['addtocartt']),
     imageload(){
       this.refresh()
       this.gettopY()
@@ -112,8 +118,24 @@ export default {
           this.$refs.currentIndex.currentIndex = i
         }
       }
+
+      this.isshow = -position.y > 1000
+    },
+
+    addToCart(){
+      const product = {}
+      product.image = this.topimage[0]
+      product.price = this.goodsinfo.realprice
+      product.title = this.goodsinfo.title
+      product.desc = this.goodsinfo.desc
+      product.iid = this.iid
+      this.addtocartt(product).then(res => {
+        this.$toast.show(res,1500)
+      })
+      /* this.$store.dispatch('addtocartt',product).then(res => {
+        console.log(res);
+      }) */
     }
-    
   }
 }
 </script>
@@ -125,7 +147,7 @@ export default {
     z-index: 1;
   }
   .scroll{
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 49px);
     overflow: hidden;
     background-color: white
   }
